@@ -1,6 +1,9 @@
 {
   "name": "server",
   "version": "1.0.0",
+  "engines": {
+   "node": "14.15.4"
+   },
   "description": "",
   "main": "index.js",
   "type": "module",
