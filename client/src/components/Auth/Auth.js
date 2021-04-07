@@ -2,6 +2,9 @@ import React, { useState }from 'react'
 import { Avatar, Typography, Button, Paper, Grid, Container } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import GoogleLogin from 'react-google-login';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+
 import useStyles from './styles';
 import Icon from './icon';
 
@@ -10,6 +13,9 @@ import Input from './Input'
 const Auth = () => {
 
     const classes = useStyles();
+    const dispatch = useDispatch();
+    const history = useHistory();
+
     const [isSignup, setIsSignup] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const handleShowPassword = () => setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -28,10 +34,20 @@ const Auth = () => {
     };
 
     const googleSuccess = async (res) => {
-        console.log(res);
+        const result = res?.profileObj;
+        const token = res?.tokenId;
+
+        try {
+            dispatch({ type: 'AUTH', data: { result, token} });
+            
+            history.push('/');
+        } catch (error) {
+            console.log(error);
+        }
     };
 
-    const googleFailure = () => {
+    const googleFailure = (error) => {
+        console.log(error);
         console.log('Google Sign In was unsuccessful, Try Again Later');
     };
 
@@ -47,7 +63,7 @@ const Auth = () => {
                         {
                             isSignup && (
                                 <>
-                                    <Input name="firstname" label="First Name" handleChange={handleChange} autofocus half />
+                                    <Input name="firstname" label="First Name" handleChange={handleChange} autoFocus half />
                                     <Input name="lastname" label="Last Name" handleChange={handleChange} half />
                                 </>    
                             )}
