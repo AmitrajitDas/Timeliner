@@ -8,23 +8,35 @@ import { useHistory } from 'react-router-dom';
 import useStyles from './styles';
 import Icon from './icon';
 
-import Input from './Input'
+import Input from './Input';
+import { signin, signup } from '../../actions/auth';
 
 const Auth = () => {
 
     const classes = useStyles();
     const dispatch = useDispatch();
     const history = useHistory();
+    const initialState = { firstName : '', lastName : '', email : '', password : '', confirmPassword : '' };
 
     const [isSignup, setIsSignup] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [formData, setFormData] = useState(initialState);
     const handleShowPassword = () => setShowPassword((prevShowPassword) => !prevShowPassword);
 
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
 
+        e.preventDefault();
+
+        if(isSignup) {
+            dispatch(signup(formData, history));
+        } else {
+            dispatch(signin(formData, history));
+        }
     };
 
-    const handleChange = () => {
+    const handleChange = (e) => {
+
+        setFormData({...formData, [e.target.name] : e.target.value });
 
     };
 
@@ -38,7 +50,7 @@ const Auth = () => {
         const token = res?.tokenId;
 
         try {
-            dispatch({ type: 'AUTH', data: { result, token} });
+            dispatch({ type: 'AUTH', data: { result, token } });
             
             history.push('/');
         } catch (error) {
@@ -63,8 +75,8 @@ const Auth = () => {
                         {
                             isSignup && (
                                 <>
-                                    <Input name="firstname" label="First Name" handleChange={handleChange} autoFocus half />
-                                    <Input name="lastname" label="Last Name" handleChange={handleChange} half />
+                                    <Input name="firstName" label="First Name" handleChange={handleChange} autoFocus half />
+                                    <Input name="lastName" label="Last Name" handleChange={handleChange} half />
                                 </>    
                             )}
                             <Input name="email" label="Email Address" handleChange={handleChange} type="email" />
